@@ -1,0 +1,390 @@
+
+		    
+#Name: K Divya Bhavani
+#Email: divyabhavanik123@gmail.com
+#Course: Cloud Computing
+#Batch: May
+#Title of the Project: College Lab Management System in Cloud
+
+$rg1name = "firstyear-rg-01"
+$rg2name = "secondyear-rg-01"
+$rg3name = "thirdyear-rg-01"
+$rg4name = "fourthyear-rg-01"
+
+
+$location1 = "EastUS"
+$location2 = "EastAsia"
+$location3 = "NorthEurope"
+$location4 = "AustraliaCentral"
+
+#Resource Groups
+New-AzResourceGroup -Name $rg1name -Location $location1
+New-AzResourceGroup -Name $rg2name -Location $location2
+New-AzResourceGroup -Name $rg3name -Location $location3
+New-AzResourceGroup -Name $rg4name -Location $location4
+
+#subnet config for Vnet
+$subnet1config = New-AzVirtualNetworkSubnetConfig -Name "ec-lab-sn-01" -AddressPrefix "10.0.0.0/26"
+$subnet2config = New-AzVirtualNetworkSubnetConfig -Name "cs-lab-sn-01" -AddressPrefix "10.0.0.64/26"
+$subnet3config = New-AzVirtualNetworkSubnetConfig -Name "it-lab-sn-01" -AddressPrefix "10.0.0.128/26"
+$subnet4config = New-AzVirtualNetworkSubnetConfig -Name "mech-lab-sn-01" -AddressPrefix "10.0.0.192/26"
+
+$subnet5config = New-AzVirtualNetworkSubnetConfig -Name "ec-lab-sn-02" -AddressPrefix "20.0.0.0/26"
+$subnet6config = New-AzVirtualNetworkSubnetConfig -Name "cs-lab-sn-02" -AddressPrefix "20.0.0.64/26"
+$subnet7config = New-AzVirtualNetworkSubnetConfig -Name "it-lab-sn-02" -AddressPrefix "20.0.0.128/26"
+$subnet8config = New-AzVirtualNetworkSubnetConfig -Name "mech-lab-sn-02" -AddressPrefix "20.0.0.192/26"
+
+$subnet9config = New-AzVirtualNetworkSubnetConfig -Name "ec-lab-sn-03" -AddressPrefix "30.0.0.0/26"
+$subnet10config = New-AzVirtualNetworkSubnetConfig -Name "cs-lab-sn-03" -AddressPrefix "30.0.0.64/26"
+$subnet11config = New-AzVirtualNetworkSubnetConfig -Name "it-lab-sn-03" -AddressPrefix "30.0.0.128/26"
+$subnet12config = New-AzVirtualNetworkSubnetConfig -Name "mech-lab-sn-03" -AddressPrefix "30.0.0.192/26"
+
+$subnet13config = New-AzVirtualNetworkSubnetConfig -Name "ec-lab-sn-04" -AddressPrefix "40.0.0.0/26"
+$subnet14config = New-AzVirtualNetworkSubnetConfig -Name "cs-lab-sn-04" -AddressPrefix "40.0.0.64/26"
+$subnet15config = New-AzVirtualNetworkSubnetConfig -Name "it-lab-sn-04" -AddressPrefix "40.0.0.128/26"
+$subnet16config = New-AzVirtualNetworkSubnetConfig -Name "mech-lab-sn-04" -AddressPrefix "40.0.0.192/26"
+
+#Virtual networks
+$vnet1 =New-AzVirtualNetwork -ResourceGroupName $rg1name -Name "firstyear-vn-01" -AddressPrefix "10.0.0.0/24" -Location $location1 -Subnet $subnet1config,$subnet2config,$subnet3config,$subnet4config
+$vnet2 =New-AzVirtualNetwork -ResourceGroupName $rg2name -Name "secondyear-vn-01" -AddressPrefix "20.0.0.0/24" -Location $location2 -Subnet $subnet5config,$subnet6config,$subnet7config,$subnet8config
+$vnet3 =New-AzVirtualNetwork -ResourceGroupName $rg3name -Name "thirdyear-vn-01" -AddressPrefix "30.0.0.0/24" -Location $location3 -Subnet $subnet9config,$subnet10config,$subnet11config,$subnet12config
+$vnet4 =New-AzVirtualNetwork -ResourceGroupName $rg4name -Name "fourthyear-vn-01" -AddressPrefix "40.0.0.0/24" -Location $location4 -Subnet $subnet13config,$subnet14config,$subnet15config,$subnet16config
+
+$vnet1 = Get-AzVirtualNetwork -ResourceGroupName $rg1name -Name "firstyear-vn-01"
+$vnet2 = Get-AzVirtualNetwork -ResourceGroupName $rg2name -Name "secondyear-vn-01"
+$vnet3 = Get-AzVirtualNetwork -ResourceGroupName $rg3name -Name "thirdyear-vn-01"
+$vnet4 = Get-AzVirtualNetwork -ResourceGroupName $rg4name -Name "fourthyear-vn-01"
+
+#Network-Peering
+Add-AzVirtualNetworkPeering -Name "firstyrtosecond" -VirtualNetwork $vnet1 -RemoteVirtualNetworkId $vnet2.Id
+Add-AzVirtualNetworkPeering -Name "secondyrtofirst" -VirtualNetwork $vnet2 -RemoteVirtualNetworkId $vnet1.Id
+
+Add-AzVirtualNetworkPeering -Name "firstyrtothird" -VirtualNetwork $vnet1 -RemoteVirtualNetworkId $vnet3.Id
+Add-AzVirtualNetworkPeering -Name "thirdyrtofirst" -VirtualNetwork $vnet3 -RemoteVirtualNetworkId $vnet1.Id
+
+Add-AzVirtualNetworkPeering -Name "firstyrtofourth" -VirtualNetwork $vnet1 -RemoteVirtualNetworkId $vnet4.Id
+Add-AzVirtualNetworkPeering -Name "fourthyrtofirst" -VirtualNetwork $vnet4 -RemoteVirtualNetworkId $vnet1.Id
+
+Add-AzVirtualNetworkPeering -Name "secondyrtothird" -VirtualNetwork $vnet2 -RemoteVirtualNetworkId $vnet3.Id
+Add-AzVirtualNetworkPeering -Name "thirdyrtosecond" -VirtualNetwork $vnet3 -RemoteVirtualNetworkId $vnet2.Id
+
+Add-AzVirtualNetworkPeering -Name "secondyrtofourth" -VirtualNetwork $vnet2 -RemoteVirtualNetworkId $vnet4.Id
+Add-AzVirtualNetworkPeering -Name "fourthyrtosecond" -VirtualNetwork $vnet4 -RemoteVirtualNetworkId $vnet2.Id
+
+Add-AzVirtualNetworkPeering -Name "thirdyrtofourth" -VirtualNetwork $vnet3 -RemoteVirtualNetworkId $vnet4.Id
+Add-AzVirtualNetworkPeering -Name "fourthyrtothird" -VirtualNetwork $vnet4 -RemoteVirtualNetworkId $vnet3.Id
+
+Get-AzVirtualNetworkPeering -ResourceGroupName $rg1name -VirtualNetworkName $vnet1.Name | select PeeringState
+Get-AzVirtualNetworkPeering -ResourceGroupName $rg2name -VirtualNetworkName $vnet2.Name | select PeeringState
+Get-AzVirtualNetworkPeering -ResourceGroupName $rg3name -VirtualNetworkName $vnet3.Name | select PeeringState
+Get-AzVirtualNetworkPeering -ResourceGroupName $rg4name -VirtualNetworkName $vnet4.Name | select PeeringState
+
+$rule1 = New-AzNetworkSecurityRuleConfig -Name Allow_RDP_IN -Description "Allow port 3389" -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
+$rule2 = New-AzNetworkSecurityRuleConfig -Name Allow_SSH_IN -Description "Allow port 22" -Access Allow -Protocol Tcp -Direction Inbound -Priority 101 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 22
+$rule3 = New-AzNetworkSecurityRuleConfig -Name Allow_RDP_OUT -Description "Allow port 3389" -Access Allow -Protocol Tcp -Direction Outbound -Priority 300 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
+$rule4 = New-AzNetworkSecurityRuleConfig -Name Allow_SSH_OUT -Description "Allow port 22" -Access Allow -Protocol Tcp -Direction Outbound -Priority 301 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 22
+
+#Network security groups with inbound and outbound ports
+$s1nsg = New-AzNetworkSecurityGroup -Name "firstyear-nsg-01" -ResourceGroupName $rg1name -Location $location1 -SecurityRules $rule1,$rule2,$rule3,$rule4
+$s2nsg = New-AzNetworkSecurityGroup -Name "secondyear-nsg-01" -ResourceGroupName $rg2name -Location $location2 -SecurityRules $rule1,$rule2,$rule3,$rule4
+$s3nsg = New-AzNetworkSecurityGroup -Name "thirdyear-nsg-01" -ResourceGroupName $rg3name -Location $location3 -SecurityRules $rule1,$rule2,$rule3,$rule4
+$s4nsg = New-AzNetworkSecurityGroup -Name "fourthyear-nsg-01" -ResourceGroupName $rg4name -Location $location4 -SecurityRules $rule1,$rule2,$rule3,$rule4
+
+
+$vnet1 = Get-AzVirtualNetwork -ResourceGroupName $rg1name -Name "firstyear-vn-01"
+$subnet1config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet1 -Name "ec-lab-sn-01"
+$s1nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg1name -Name "firstyear-nsg-01"
+$subnet1config.NetworkSecurityGroup = $s1nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet1
+
+$vnet1 = Get-AzVirtualNetwork -ResourceGroupName $rg1name -Name "firstyear-vn-01"
+$subnet2config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet1 -Name "cs-lab-sn-01"
+$s1nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg1name -Name "firstyear-nsg-01"
+$subnet2config.NetworkSecurityGroup = $s1nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet1
+
+$vnet1 = Get-AzVirtualNetwork -ResourceGroupName $rg1name -Name "firstyear-vn-01"
+$subnet3config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet1 -Name "it-lab-sn-01"
+$s1nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg1name -Name "firstyear-nsg-01"
+$subnet3config.NetworkSecurityGroup = $s1nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet1
+
+$vnet1 = Get-AzVirtualNetwork -ResourceGroupName $rg1name -Name "firstyear-vn-01"
+$subnet4config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet1 -Name "mech-lab-sn-01"
+$s1nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg1name -Name "firstyear-nsg-01"
+$subnet4config.NetworkSecurityGroup = $s1nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet1
+
+$vnet2 = Get-AzVirtualNetwork -ResourceGroupName $rg2name -Name "secondyear-vn-01"
+$subnet5config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet2 -Name "ec-lab-sn-02"
+$s2nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg2name -Name "secondyear-nsg-01"
+$subnet5config.NetworkSecurityGroup = $s2nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet2
+
+$vnet2 = Get-AzVirtualNetwork -ResourceGroupName $rg2name -Name "secondyear-vn-01"
+$subnet6config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet2 -Name "cs-lab-sn-02"
+$s2nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg2name -Name "secondyear-nsg-01"
+$subnet6config.NetworkSecurityGroup = $s2nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet2
+
+$vnet2 = Get-AzVirtualNetwork -ResourceGroupName $rg2name -Name "secondyear-vn-01"
+$subnet7config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet2 -Name "it-lab-sn-02"
+$s2nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg2name -Name "secondyear-nsg-01"
+$subnet7config.NetworkSecurityGroup = $s2nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet2
+
+$vnet2 = Get-AzVirtualNetwork -ResourceGroupName $rg2name -Name "secondyear-vn-01"
+$subnet8config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet2 -Name "mech-lab-sn-02"
+$s2nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg2name -Name "secondyear-nsg-01"
+$subnet8config.NetworkSecurityGroup = $s2nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet2
+
+$vnet3 = Get-AzVirtualNetwork -ResourceGroupName $rg3name -Name "thirdyear-vn-01"
+$subnet9config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet3 -Name "ec-lab-sn-03"
+$s3nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg3name -Name "thirdyear-nsg-01"
+$subnet9config.NetworkSecurityGroup = $s3nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet3
+
+$vnet3 = Get-AzVirtualNetwork -ResourceGroupName $rg3name -Name "thirdyear-vn-01"
+$subnet10config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet3 -Name "cs-lab-sn-03"
+$s3nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg3name -Name "thirdyear-nsg-01"
+$subnet10config.NetworkSecurityGroup = $s3nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet3
+
+$vnet3 = Get-AzVirtualNetwork -ResourceGroupName $rg3name -Name "thirdyear-vn-01"
+$subnet11config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet3 -Name "it-lab-sn-03"
+$s3nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg3name -Name "thirdyear-nsg-01"
+$subnet11config.NetworkSecurityGroup = $s3nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet3
+
+$vnet3 = Get-AzVirtualNetwork -ResourceGroupName $rg3name -Name "thirdyear-vn-01"
+$subnet12config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet3 -Name "mech-lab-sn-03"
+$s3nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg3name -Name "thirdyear-nsg-01"
+$subnet12config.NetworkSecurityGroup = $s3nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet3
+
+$vnet4 = Get-AzVirtualNetwork -ResourceGroupName $rg4name -Name "fourthyear-vn-01"
+$subnet13config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet4 -Name "ec-lab-sn-04"
+$s4nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg4name -Name "fourthyear-nsg-01"
+$subnet13config.NetworkSecurityGroup = $s4nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet4
+
+$vnet4 = Get-AzVirtualNetwork -ResourceGroupName $rg4name -Name "fourthyear-vn-01"
+$subnet14config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet4 -Name "cs-lab-sn-04"
+$s4nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg4name -Name "fourthyear-nsg-01"
+$subnet14config.NetworkSecurityGroup = $s4nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet4
+
+$vnet4 = Get-AzVirtualNetwork -ResourceGroupName $rg4name -Name "fourthyear-vn-01"
+$subnet15config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet4 -Name "it-lab-sn-04"
+$s4nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg4name -Name "fourthyear-nsg-01"
+$subnet15config.NetworkSecurityGroup = $s4nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet4
+
+$vnet4 = Get-AzVirtualNetwork -ResourceGroupName $rg4name -Name "fourthyear-vn-01"
+$subnet16config = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet4 -Name "mech-lab-sn-04"
+$s4nsg = Get-AzNetworkSecurityGroup -ResourceGroupName $rg4name -Name "fourthyear-nsg-01"
+$subnet16config.NetworkSecurityGroup = $s4nsg
+Set-AzVirtualNetwork -VirtualNetwork $vnet4
+
+
+#public IP
+$server1ip =New-AzPublicIpAddress -ResourceGroupName $rg1name -Name "DESKTOP-DB12-pip-01" -Location $location1 -AllocationMethod Dynamic
+$server2ip =New-AzPublicIpAddress -ResourceGroupName $rg1name -Name "DESKTOP-DB12-pip-02" -Location $location1 -AllocationMethod Dynamic
+$server3ip =New-AzPublicIpAddress -ResourceGroupName $rg1name -Name "DESKTOP-DB12-pip-03" -Location $location1 -AllocationMethod Dynamic
+$server4ip =New-AzPublicIpAddress -ResourceGroupName $rg1name -Name "DESKTOP-DB12-pip-04" -Location $location1 -AllocationMethod Dynamic
+$server17ip =New-AzPublicIpAddress -ResourceGroupName $rg1name -Name "DESKTOP-DB12-pip-17" -Location $location1 -AllocationMethod Dynamic
+$server18ip =New-AzPublicIpAddress -ResourceGroupName $rg1name -Name "DESKTOP-DB12-pip-18" -Location $location1 -AllocationMethod Dynamic
+$server19ip =New-AzPublicIpAddress -ResourceGroupName $rg1name -Name "DESKTOP-DB12-pip-19" -Location $location1 -AllocationMethod Dynamic
+$server20ip =New-AzPublicIpAddress -ResourceGroupName $rg1name -Name "DESKTOP-DB12-pip-20" -Location $location1 -AllocationMethod Dynamic
+
+
+$server5ip =New-AzPublicIpAddress -ResourceGroupName $rg2name -Name "DESKTOP-DB12-pip-05" -Location $location2 -AllocationMethod Dynamic
+$server6ip =New-AzPublicIpAddress -ResourceGroupName $rg2name -Name "DESKTOP-DB12-pip-06" -Location $location2 -AllocationMethod Dynamic
+$server7ip =New-AzPublicIpAddress -ResourceGroupName $rg2name -Name "DESKTOP-DB12-pip-07" -Location $location2 -AllocationMethod Dynamic
+$server8ip =New-AzPublicIpAddress -ResourceGroupName $rg2name -Name "DESKTOP-DB12-pip-08" -Location $location2 -AllocationMethod Dynamic
+$server21ip =New-AzPublicIpAddress -ResourceGroupName $rg2name -Name "DESKTOP-DB12-pip-21" -Location $location2 -AllocationMethod Dynamic
+$server22ip =New-AzPublicIpAddress -ResourceGroupName $rg2name -Name "DESKTOP-DB12-pip-22" -Location $location2 -AllocationMethod Dynamic
+$server23ip =New-AzPublicIpAddress -ResourceGroupName $rg2name -Name "DESKTOP-DB12-pip-23" -Location $location2 -AllocationMethod Dynamic
+$server24ip =New-AzPublicIpAddress -ResourceGroupName $rg2name -Name "DESKTOP-DB12-pip-24" -Location $location2 -AllocationMethod Dynamic
+
+$server9ip =New-AzPublicIpAddress -ResourceGroupName $rg3name -Name "DESKTOP-DB12-pip-09" -Location $location3 -AllocationMethod Dynamic
+$server10ip =New-AzPublicIpAddress -ResourceGroupName $rg3name -Name "DESKTOP-DB12-pip-10" -Location $location3 -AllocationMethod Dynamic
+$server11ip =New-AzPublicIpAddress -ResourceGroupName $rg3name -Name "DESKTOP-DB12-pip-11" -Location $location3 -AllocationMethod Dynamic
+$server12ip =New-AzPublicIpAddress -ResourceGroupName $rg3name -Name "DESKTOP-DB12-pip-12" -Location $location3 -AllocationMethod Dynamic
+$server25ip =New-AzPublicIpAddress -ResourceGroupName $rg3name -Name "DESKTOP-DB12-pip-25" -Location $location3 -AllocationMethod Dynamic
+$server26ip =New-AzPublicIpAddress -ResourceGroupName $rg3name -Name "DESKTOP-DB12-pip-26" -Location $location3 -AllocationMethod Dynamic
+$server27ip =New-AzPublicIpAddress -ResourceGroupName $rg3name -Name "DESKTOP-DB12-pip-27" -Location $location3 -AllocationMethod Dynamic
+$server28ip =New-AzPublicIpAddress -ResourceGroupName $rg3name -Name "DESKTOP-DB12-pip-28" -Location $location3 -AllocationMethod Dynamic
+
+$server13ip =New-AzPublicIpAddress -ResourceGroupName $rg4name -Name "DESKTOP-DB12-pip-13" -Location $location4 -AllocationMethod Dynamic
+$server14ip =New-AzPublicIpAddress -ResourceGroupName $rg4name -Name "DESKTOP-DB12-pip-14" -Location $location4 -AllocationMethod Dynamic
+$server15ip =New-AzPublicIpAddress -ResourceGroupName $rg4name -Name "DESKTOP-DB12-pip-15" -Location $location4 -AllocationMethod Dynamic
+$server16ip =New-AzPublicIpAddress -ResourceGroupName $rg4name -Name "DESKTOP-DB12-pip-16" -Location $location4 -AllocationMethod Dynamic
+$server29ip =New-AzPublicIpAddress -ResourceGroupName $rg4name -Name "DESKTOP-DB12-pip-29" -Location $location4 -AllocationMethod Dynamic
+$server30ip =New-AzPublicIpAddress -ResourceGroupName $rg4name -Name "DESKTOP-DB12-pip-30" -Location $location4 -AllocationMethod Dynamic
+$server31ip =New-AzPublicIpAddress -ResourceGroupName $rg4name -Name "DESKTOP-DB12-pip-31" -Location $location4 -AllocationMethod Dynamic
+$server32ip =New-AzPublicIpAddress -ResourceGroupName $rg4name -Name "DESKTOP-DB12-pip-32" -Location $location4 -AllocationMethod Dynamic
+
+
+#Network Interface Cards
+$server1nic = New-AzNetworkInterface -ResourceGroupName $rg1name -Location $location1 -Name "DESKTOP-DB12-nic-01" -Subnet $vnet1.Subnets[0] -PublicIpAddress $server1ip   -NetworkSecurityGroup $s1nsg
+$server2nic = New-AzNetworkInterface -ResourceGroupName $rg1name -Location $location1 -Name "DESKTOP-DB12-nic-02" -Subnet $vnet1.Subnets[1] -PublicIpAddress $server2ip  -NetworkSecurityGroup $s1nsg
+$server3nic = New-AzNetworkInterface -ResourceGroupName $rg1name -Location $location1 -Name "DESKTOP-DB12-nic-03" -Subnet $vnet1.Subnets[2] -PublicIpAddress $server3ip  -NetworkSecurityGroup $s1nsg
+$server4nic = New-AzNetworkInterface -ResourceGroupName $rg1name -Location $location1 -Name "DESKTOP-DB12-nic-04" -Subnet $vnet1.Subnets[3] -PublicIpAddress $server4ip  -NetworkSecurityGroup $s1nsg
+$server17nic = New-AzNetworkInterface -ResourceGroupName $rg1name -Location $location1 -Name "DESKTOP-DB12-nic-17" -Subnet $vnet1.Subnets[0] -PublicIpAddress $server17ip  -NetworkSecurityGroup $s1nsg
+$server18nic = New-AzNetworkInterface -ResourceGroupName $rg1name -Location $location1 -Name "DESKTOP-DB12-nic-18" -Subnet $vnet1.Subnets[1] -PublicIpAddress $server18ip  -NetworkSecurityGroup $s1nsg
+$server19nic = New-AzNetworkInterface -ResourceGroupName $rg1name -Location $location1 -Name "DESKTOP-DB12-nic-19" -Subnet $vnet1.Subnets[2] -PublicIpAddress $server19ip  -NetworkSecurityGroup $s1nsg
+$server20nic = New-AzNetworkInterface -ResourceGroupName $rg1name -Location $location1 -Name "DESKTOP-DB12-nic-20" -Subnet $vnet1.Subnets[3] -PublicIpAddress $server20ip  -NetworkSecurityGroup $s1nsg
+
+$server5nic = New-AzNetworkInterface -ResourceGroupName $rg2name -Location $location2 -Name "DESKTOP-DB12-nic-05" -Subnet $vnet2.Subnets[0] -PublicIpAddress $server5ip  -NetworkSecurityGroup $s2nsg
+$server6nic = New-AzNetworkInterface -ResourceGroupName $rg2name -Location $location2 -Name "DESKTOP-DB12-nic-06" -Subnet $vnet2.Subnets[1] -PublicIpAddress $server6ip  -NetworkSecurityGroup $s2nsg
+$server7nic = New-AzNetworkInterface -ResourceGroupName $rg2name -Location $location2 -Name "DESKTOP-DB12-nic-07" -Subnet $vnet2.Subnets[2] -PublicIpAddress $server7ip  -NetworkSecurityGroup $s2nsg
+$server8nic = New-AzNetworkInterface -ResourceGroupName $rg2name -Location $location2 -Name "DESKTOP-DB12-nic-08" -Subnet $vnet2.Subnets[3] -PublicIpAddress $server8ip  -NetworkSecurityGroup $s2nsg
+$server21nic = New-AzNetworkInterface -ResourceGroupName $rg2name -Location $location2 -Name "DESKTOP-DB12-nic-21" -Subnet $vnet2.Subnets[0] -PublicIpAddress $server21ip -NetworkSecurityGroup $s2nsg
+$server22nic = New-AzNetworkInterface -ResourceGroupName $rg2name -Location $location2 -Name "DESKTOP-DB12-nic-22" -Subnet $vnet2.Subnets[1] -PublicIpAddress $server22ip -NetworkSecurityGroup $s2nsg
+$server23nic = New-AzNetworkInterface -ResourceGroupName $rg2name -Location $location2 -Name "DESKTOP-DB12-nic-23" -Subnet $vnet2.Subnets[2] -PublicIpAddress $server23ip -NetworkSecurityGroup $s2nsg
+$server24nic = New-AzNetworkInterface -ResourceGroupName $rg2name -Location $location2 -Name "DESKTOP-DB12-nic-24" -Subnet $vnet2.Subnets[3] -PublicIpAddress $server24ip -NetworkSecurityGroup $s2nsg
+
+$server9nic = New-AzNetworkInterface -ResourceGroupName $rg3name -Location $location3 -Name "DESKTOP-DB12-nic-09" -Subnet $vnet3.Subnets[0] -PublicIpAddress $server9ip   -NetworkSecurityGroup $s3nsg
+$server10nic = New-AzNetworkInterface -ResourceGroupName $rg3name -Location $location3 -Name "DESKTOP-DB12-nic-10" -Subnet $vnet3.Subnets[1] -PublicIpAddress $server10ip -NetworkSecurityGroup $s3nsg
+$server11nic = New-AzNetworkInterface -ResourceGroupName $rg3name -Location $location3 -Name "DESKTOP-DB12-nic-11" -Subnet $vnet3.Subnets[2] -PublicIpAddress $server11ip -NetworkSecurityGroup $s3nsg
+$server12nic = New-AzNetworkInterface -ResourceGroupName $rg3name -Location $location3 -Name "DESKTOP-DB12-nic-12" -Subnet $vnet3.Subnets[3] -PublicIpAddress $server12ip -NetworkSecurityGroup $s3nsg
+$server25nic = New-AzNetworkInterface -ResourceGroupName $rg3name -Location $location3 -Name "DESKTOP-DB12-nic-25" -Subnet $vnet3.Subnets[0] -PublicIpAddress $server25ip -NetworkSecurityGroup $s3nsg
+$server26nic = New-AzNetworkInterface -ResourceGroupName $rg3name -Location $location3 -Name "DESKTOP-DB12-nic-26" -Subnet $vnet3.Subnets[1] -PublicIpAddress $server26ip -NetworkSecurityGroup $s3nsg
+$server27nic = New-AzNetworkInterface -ResourceGroupName $rg3name -Location $location3 -Name "DESKTOP-DB12-nic-27" -Subnet $vnet3.Subnets[2] -PublicIpAddress $server27ip -NetworkSecurityGroup $s3nsg
+$server28nic = New-AzNetworkInterface -ResourceGroupName $rg3name -Location $location3 -Name "DESKTOP-DB12-nic-28" -Subnet $vnet3.Subnets[3] -PublicIpAddress $server28ip -NetworkSecurityGroup $s3nsg
+
+$server13nic = New-AzNetworkInterface -ResourceGroupName $rg4name -Location $location4 -Name "DESKTOP-DB12-nic-13" -Subnet $vnet4.Subnets[0] -PublicIpAddress $server13ip  -NetworkSecurityGroup $s4nsg
+$server14nic = New-AzNetworkInterface -ResourceGroupName $rg4name -Location $location4 -Name "DESKTOP-DB12-nic-14" -Subnet $vnet4.Subnets[1] -PublicIpAddress $server14ip  -NetworkSecurityGroup $s4nsg
+$server15nic = New-AzNetworkInterface -ResourceGroupName $rg4name -Location $location4 -Name "DESKTOP-DB12-nic-15" -Subnet $vnet4.Subnets[2] -PublicIpAddress $server15ip  -NetworkSecurityGroup $s4nsg
+$server16nic = New-AzNetworkInterface -ResourceGroupName $rg4name -Location $location4 -Name "DESKTOP-DB12-nic-16" -Subnet $vnet4.Subnets[3] -PublicIpAddress $server16ip  -NetworkSecurityGroup $s4nsg
+$server29nic = New-AzNetworkInterface -ResourceGroupName $rg4name -Location $location4 -Name "DESKTOP-DB12-nic-29" -Subnet $vnet4.Subnets[0] -PublicIpAddress $server29ip  -NetworkSecurityGroup $s4nsg
+$server30nic = New-AzNetworkInterface -ResourceGroupName $rg4name -Location $location4 -Name "DESKTOP-DB12-nic-30" -Subnet $vnet4.Subnets[1] -PublicIpAddress $server30ip  -NetworkSecurityGroup $s4nsg
+$server31nic = New-AzNetworkInterface -ResourceGroupName $rg4name -Location $location4 -Name "DESKTOP-DB12-nic-31" -Subnet $vnet4.Subnets[2] -PublicIpAddress $server31ip  -NetworkSecurityGroup $s4nsg
+$server32nic = New-AzNetworkInterface -ResourceGroupName $rg4name -Location $location4 -Name "DESKTOP-DB12-nic-32" -Subnet $vnet4.Subnets[3] -PublicIpAddress $server32ip  -NetworkSecurityGroup $s4nsg
+
+
+#Credentials
+$Servercred = Get-Credential -message "Enter your credential for Azure vm"
+$securePassword = ConvertTo-SecureString 'Divyabhavani_' -AsPlainText -Force
+$Servercred2 = New-Object System.Management.Automation.PSCredential ('testadmin', $securePassword)
+
+#Storage account
+$storage1 = New-AzStorageAccount -ResourceGroupName $rg1name -Name "jntuhcejsa" -Location $location1 -SkuName Standard_GRS -Kind StorageV2 -AccessTier Hot
+
+#datadisk to attach to VM
+$diskConfig = New-AzDiskConfig -SkuName Standard_LRS -Location $location1 -CreateOption Empty -DiskSizeGB 80
+$dataDisk1 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-01" -Disk $diskConfig -ResourceGroupName $rg1Name
+$dataDisk2 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-02" -Disk $diskConfig -ResourceGroupName $rg1Name
+$dataDisk3 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-03" -Disk $diskConfig -ResourceGroupName $rg1Name
+$dataDisk4 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-04" -Disk $diskConfig -ResourceGroupName $rg1Name
+$dataDisk5 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-05" -Disk $diskConfig -ResourceGroupName $rg1Name
+$dataDisk6 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-06" -Disk $diskConfig -ResourceGroupName $rg1Name
+$dataDisk7 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-07" -Disk $diskConfig -ResourceGroupName $rg1Name
+$dataDisk8 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-08" -Disk $diskConfig -ResourceGroupName $rg1Name
+
+$diskConfig2 = New-AzDiskConfig -SkuName Standard_LRS -Location $location2 -CreateOption Empty -DiskSizeGB 80
+$dataDisk9 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-09" -Disk $diskConfig2 -ResourceGroupName $rg2Name
+$dataDisk10 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-10" -Disk $diskConfig2 -ResourceGroupName $rg2Name
+$dataDisk11 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-11" -Disk $diskConfig2 -ResourceGroupName $rg2Name
+$dataDisk12 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-12" -Disk $diskConfig2 -ResourceGroupName $rg2Name
+$dataDisk13 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-13" -Disk $diskConfig2 -ResourceGroupName $rg2Name
+$dataDisk14 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-14" -Disk $diskConfig2 -ResourceGroupName $rg2Name
+$dataDisk15 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-15" -Disk $diskConfig2 -ResourceGroupName $rg2Name
+$dataDisk16 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-16" -Disk $diskConfig2 -ResourceGroupName $rg2Name
+
+
+$diskConfig3 = New-AzDiskConfig -SkuName Standard_LRS -Location $location3 -CreateOption Empty -DiskSizeGB 80
+$dataDisk17 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-17" -Disk $diskConfig3 -ResourceGroupName $rg3Name
+$dataDisk18 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-18" -Disk $diskConfig3 -ResourceGroupName $rg3Name
+$dataDisk19 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-19" -Disk $diskConfig3 -ResourceGroupName $rg3Name
+$dataDisk20 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-20" -Disk $diskConfig3 -ResourceGroupName $rg3Name
+$dataDisk21 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-21" -Disk $diskConfig3 -ResourceGroupName $rg3Name
+$dataDisk22 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-22" -Disk $diskConfig3 -ResourceGroupName $rg3Name
+$dataDisk23 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-23" -Disk $diskConfig3 -ResourceGroupName $rg3Name
+$dataDisk24 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-24" -Disk $diskConfig3 -ResourceGroupName $rg3Name
+
+$diskConfig4 = New-AzDiskConfig -SkuName Standard_LRS -Location $location4 -CreateOption Empty -DiskSizeGB 80
+$dataDisk25 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-25" -Disk $diskConfig4 -ResourceGroupName $rg4Name
+$dataDisk26 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-26" -Disk $diskConfig4 -ResourceGroupName $rg4Name
+$dataDisk27 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-27" -Disk $diskConfig4 -ResourceGroupName $rg4Name
+$dataDisk28 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-28" -Disk $diskConfig4 -ResourceGroupName $rg4Name
+$dataDisk29 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-29" -Disk $diskConfig4 -ResourceGroupName $rg4Name
+$dataDisk30 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-30" -Disk $diskConfig4 -ResourceGroupName $rg4Name
+$dataDisk31 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-31" -Disk $diskConfig4 -ResourceGroupName $rg4Name
+$dataDisk32 = New-AzDisk -DiskName "DESKTOP-DB12-datadisk-32" -Disk $diskConfig4 -ResourceGroupName $rg4Name
+
+$server1vmconfig = New-AzVMConfig -VMName "W-firstyear-ec-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-01" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server1nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-01" -CreateOption Attach -ManagedDiskId $dataDisk1.Id -Lun 1
+$server2vmconfig = New-AzVMConfig -VMName "L-firstyear-ec-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-02" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest  | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa"  | Add-AzVMNetworkInterface -Id $server17nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-02" -CreateOption Attach -ManagedDiskId $dataDisk2.Id -Lun 1
+$server3vmconfig = New-AzVMConfig -VMName "W-firstyear-cs-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-03" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server2nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-03" -CreateOption Attach -ManagedDiskId $dataDisk3.Id -Lun 1
+$server4vmconfig = New-AzVMConfig -VMName "L-firstyear-cs-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-04" -Credential $Servercred2 | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server18nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-04" -CreateOption Attach -ManagedDiskId $dataDisk4.Id -Lun 1 
+$server5vmconfig = New-AzVMConfig -VMName "W-firstyear-it-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-05" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server3nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-05" -CreateOption Attach -ManagedDiskId $dataDisk5.Id -Lun 1
+$server6vmconfig = New-AzVMConfig -VMName "L-firstyear-it-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-06" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server19nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-06" -CreateOption Attach -ManagedDiskId $dataDisk6.Id -Lun 1
+$server7vmconfig = New-AzVMConfig -VMName "W-firstyear-mech-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-07" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server4nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-07" -CreateOption Attach -ManagedDiskId $dataDisk7.Id -Lun 1
+$server8vmconfig = New-AzVMConfig -VMName "L-firstyear-mech-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-08" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server20nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-08" -CreateOption Attach -ManagedDiskId $dataDisk8.Id -Lun 1
+
+#VM creation
+$server1vm = New-AzVM -ResourceGroupName $rg1name -Location $location1 -VM $server1vmconfig
+$server2vm = New-AzVM -ResourceGroupName $rg1name -Location $location1 -VM $server2vmconfig
+$server3vm = New-AzVM -ResourceGroupName $rg1name -Location $location1 -VM $server3vmconfig
+$server4vm = New-AzVM -ResourceGroupName $rg1name -Location $location1 -VM $server4vmconfig
+$server5vm = New-AzVM -ResourceGroupName $rg1name -Location $location1 -VM $server5vmconfig
+$server6vm = New-AzVM -ResourceGroupName $rg1name -Location $location1 -VM $server6vmconfig
+$server7vm = New-AzVM -ResourceGroupName $rg1name -Location $location1 -VM $server7vmconfig
+$server8vm = New-AzVM -ResourceGroupName $rg1name -Location $location1 -VM $server8vmconfig
+
+$server9vmconfig = New-AzVMConfig -VMName "W-secondyear-ec-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-09" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server5nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-09" -CreateOption Attach -ManagedDiskId $dataDisk9.Id -Lun 1
+$server10vmconfig = New-AzVMConfig -VMName "L-secondyear-ec-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-10" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest  | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa"  | Add-AzVMNetworkInterface -Id $server21nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-10" -CreateOption Attach -ManagedDiskId $dataDisk10.Id -Lun 1
+$server11vmconfig = New-AzVMConfig -VMName "W-secondyear-cs-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-11" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server6nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-11" -CreateOption Attach -ManagedDiskId $dataDisk11.Id -Lun 1
+$server12vmconfig = New-AzVMConfig -VMName "L-secondyear-cs-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-12" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server22nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-12" -CreateOption Attach -ManagedDiskId $dataDisk12.Id -Lun 1 
+$server13vmconfig = New-AzVMConfig -VMName "W-secondyear-it-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-13" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server7nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-13" -CreateOption Attach -ManagedDiskId $dataDisk13.Id -Lun 1
+$server14vmconfig = New-AzVMConfig -VMName "L-secondyear-it-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-14" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server23nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-14" -CreateOption Attach -ManagedDiskId $dataDisk14.Id -Lun 1
+$server15vmconfig = New-AzVMConfig -VMName "W-secondyear-mech-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-15" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server8nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-15" -CreateOption Attach -ManagedDiskId $dataDisk15.Id -Lun 1
+$server16vmconfig = New-AzVMConfig -VMName "L-secondyear-mech-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-16" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server24nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-16" -CreateOption Attach -ManagedDiskId $dataDisk16.Id -Lun 1
+
+$server9vm = New-AzVM -ResourceGroupName $rg2name -Location $location2 -VM $server9vmconfig
+$server10vm = New-AzVM -ResourceGroupName $rg2name -Location $location2 -VM $server10vmconfig
+$server11vm = New-AzVM -ResourceGroupName $rg2name -Location $location2 -VM $server11vmconfig
+$server12vm = New-AzVM -ResourceGroupName $rg2name -Location $location2 -VM $server12vmconfig
+$server13vm = New-AzVM -ResourceGroupName $rg2name -Location $location2 -VM $server13vmconfig
+$server14vm = New-AzVM -ResourceGroupName $rg2name -Location $location2 -VM $server14vmconfig
+$server15vm = New-AzVM -ResourceGroupName $rg2name -Location $location2 -VM $server15vmconfig
+$server16vm = New-AzVM -ResourceGroupName $rg2name -Location $location2 -VM $server16vmconfig
+
+$server17vmconfig = New-AzVMConfig -VMName "W-thirdyear-ec-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-17" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server9nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-17" -CreateOption Attach -ManagedDiskId $dataDisk17.Id -Lun 1
+$server18vmconfig = New-AzVMConfig -VMName "L-thirdyear-ec-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-18" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest  | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa"  | Add-AzVMNetworkInterface -Id $server25nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-18" -CreateOption Attach -ManagedDiskId $dataDisk18.Id -Lun 1
+$server19vmconfig = New-AzVMConfig -VMName "W-thirdyear-cs-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-19" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server10nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-19" -CreateOption Attach -ManagedDiskId $dataDisk19.Id -Lun 1
+$server20vmconfig = New-AzVMConfig -VMName "L-thirdyear-cs-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-20" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server26nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-20" -CreateOption Attach -ManagedDiskId $dataDisk20.Id -Lun 1 
+$server21vmconfig = New-AzVMConfig -VMName "W-thirdyear-it-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-21" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server11nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-21" -CreateOption Attach -ManagedDiskId $dataDisk21.Id -Lun 1
+$server22vmconfig = New-AzVMConfig -VMName "L-thirdyear-it-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-22" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server27nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-22" -CreateOption Attach -ManagedDiskId $dataDisk22.Id -Lun 1
+$server23vmconfig = New-AzVMConfig -VMName "W-thirdyear-mech-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-23" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server12nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-23" -CreateOption Attach -ManagedDiskId $dataDisk23.Id -Lun 1
+$server24vmconfig = New-AzVMConfig -VMName "L-thirdyear-mech-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-24" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server28nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-24" -CreateOption Attach -ManagedDiskId $dataDisk24.Id -Lun 1
+
+$server17vm = New-AzVM -ResourceGroupName $rg3name -Location $location3 -VM $server17vmconfig
+$server18vm = New-AzVM -ResourceGroupName $rg3name -Location $location3 -VM $server18vmconfig
+$server19vm = New-AzVM -ResourceGroupName $rg3name -Location $location3 -VM $server19vmconfig
+$server20vm = New-AzVM -ResourceGroupName $rg3name -Location $location3 -VM $server20vmconfig
+$server21vm = New-AzVM -ResourceGroupName $rg3name -Location $location3 -VM $server21vmconfig
+$server22vm = New-AzVM -ResourceGroupName $rg3name -Location $location3 -VM $server22vmconfig
+$server23vm = New-AzVM -ResourceGroupName $rg3name -Location $location3 -VM $server23vmconfig
+$server24vm = New-AzVM -ResourceGroupName $rg3name -Location $location3 -VM $server24vmconfig
+
+
+$server25vmconfig = New-AzVMConfig -VMName "W-fourthyear-ec-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-25" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server13nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-25" -CreateOption Attach -ManagedDiskId $dataDisk25.Id -Lun 1
+$server26vmconfig = New-AzVMConfig -VMName "L-fourthyear-ec-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-26" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest  | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa"  | Add-AzVMNetworkInterface -Id $server29nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-26" -CreateOption Attach -ManagedDiskId $dataDisk26.Id -Lun 1
+$server27vmconfig = New-AzVMConfig -VMName "W-fourthyear-cs-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-27" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server14nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-27" -CreateOption Attach -ManagedDiskId $dataDisk27.Id -Lun 1
+$server28vmconfig = New-AzVMConfig -VMName "L-fourthyear-cs-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-28" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server30nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-28" -CreateOption Attach -ManagedDiskId $dataDisk28.Id -Lun 1 
+$server29vmconfig = New-AzVMConfig -VMName "W-fourthyear-it-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-29" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server15nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-29" -CreateOption Attach -ManagedDiskId $dataDisk29.Id -Lun 1
+$server30vmconfig = New-AzVMConfig -VMName "L-fourthyear-it-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-30" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server31nic.id  | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-30" -CreateOption Attach -ManagedDiskId $dataDisk30.Id -Lun 1
+$server31vmconfig = New-AzVMConfig -VMName "W-fourthyear-mech-vm-01" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Windows -ComputerName "DESKTOP-DB12-31" -Credential $Servercred | Set-AzVMSourceImage -PublisherName "Microsoftwindowsserver" -Offer "windowsServer" -Skus "2016-Datacenter" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server16nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-31" -CreateOption Attach -ManagedDiskId $dataDisk31.Id -Lun 1
+$server32vmconfig = New-AzVMConfig -VMName "L-fourthyear-mech-vm-02" -VMSize "Standard_B1ms" | Set-AzVMOperatingSystem -Linux -ComputerName "DESKTOP-DB12-32" -Credential $Servercred2  | Set-AzVMSourceImage -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "18.04-LTS" -Version latest | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $rg1name -StorageAccountName "jntuhcejsa" | Add-AzVMNetworkInterface -Id $server32nic.id | Add-AzVMDataDisk -Name "DESKTOP-DB12-datadisk-32" -CreateOption Attach -ManagedDiskId $dataDisk32.Id -Lun 1
+
+$server25vm = New-AzVM -ResourceGroupName $rg4name -Location $location4 -VM $server25vmconfig
+$server26vm = New-AzVM -ResourceGroupName $rg4name -Location $location4 -VM $server26vmconfig
+$server27vm = New-AzVM -ResourceGroupName $rg4name -Location $location4 -VM $server27vmconfig
+$server28vm = New-AzVM -ResourceGroupName $rg4name -Location $location4 -VM $server28vmconfig
+$server29vm = New-AzVM -ResourceGroupName $rg4name -Location $location4 -VM $server29vmconfig
+$server30vm = New-AzVM -ResourceGroupName $rg4name -Location $location4 -VM $server30vmconfig
+$server31vm = New-AzVM -ResourceGroupName $rg4name -Location $location4 -VM $server31vmconfig
+$server32vm = New-AzVM -ResourceGroupName $rg4name -Location $location4 -VM $server32vmconfig
